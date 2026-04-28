@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Momo+Signature&family=Schoolbell&display=swap" rel="stylesheet"></link>
     <title>Catalogue LEGO</title>
 
     <style>
@@ -56,6 +59,71 @@
 .fav.active { color: #e63946; }
 
 body.dark .fav.active { color: #ff6b7a; }
+
+.range-wrap {
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.range-wrap input[type="range"] {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+
+.range-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #111;
+  cursor: pointer;
+  pointer-events: all;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.range-wrap input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #111;
+  cursor: pointer;
+  pointer-events: all;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.range-track {
+  position: absolute;
+  height: 4px;
+  border-radius: 2px;
+  background: #ddd;
+  width: 100%;
+}
+
+.range-fill {
+  position: absolute;
+  height: 4px;
+  border-radius: 2px;
+  background: #111;
+}
+
+body.dark .range-wrap input[type="range"]::-webkit-slider-thumb,
+body.dark .range-wrap input[type="range"]::-moz-range-thumb {
+  background: #eee;
+  border-color: #333;
+}
+
+body.dark .range-fill { background: #eee; }
+body.dark .range-track { background: #555; }
 
       @keyframes windows-alert-flash {
         0% {
@@ -235,7 +303,8 @@ body.dark .fav.active { color: #ff6b7a; }
       }
 
       .title {
-        font-size: 2rem;
+        font-family: 'Schoolbell', cursive;
+        font-size: 3rem;
         font-weight: 700;
         text-transform: uppercase;
         flex: 1;
@@ -1081,7 +1150,7 @@ body.dark .fav.active { color: #ff6b7a; }
         <span class="title">Catalogue LEGO</span>
 
         <button class="theme-btn" @click="toggleTheme">
-          {{ darkMode ? "🌙" : "☀️" }}
+          {{ darkMode ? "☾" : "🌞" }}
         </button>
 
         <button class="cart-btn" @click="ouvrirPanier">
@@ -1131,6 +1200,51 @@ body.dark .fav.active { color: #ff6b7a; }
               <option v-for="t in themes" :key="t" :value="t">{{ t }}</option>
             </select>
           </div>
+          <div style="margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+  <span style="font-size: 0.9rem; font-weight: 600; white-space: nowrap;">Prix :</span>
+
+  <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #555; white-space: nowrap;">
+    <span>{{ prixMin.toFixed(0) }} €</span>
+    <span style="opacity: 0.4;">—</span>
+    <span>{{ prixMax.toFixed(0) }} €</span>
+  </div>
+
+  <div class="range-wrap" style="flex: 1; min-width: 180px;">
+    <div class="range-track"></div>
+    <div
+      class="range-fill"
+      :style="{
+        left:  (prixMin / prixBorne * 100) + '%',
+        width: ((prixMax - prixMin) / prixBorne * 100) + '%'
+      }"
+    ></div>
+
+    <input
+      type="range"
+      :min="0"
+      :max="prixBorne"
+      step="1"
+      v-model.number="prixMin"
+      @input="clampPrix"
+    />
+    <input
+      type="range"
+      :min="0"
+      :max="prixBorne"
+      step="1"
+      v-model.number="prixMax"
+      @input="clampPrix"
+    />
+  </div>
+
+  <button
+    type="button"
+    style="border: none; border-radius: 999px; padding: 0.35rem 0.9rem; background: #888; color: #fff; font-size: 0.82rem; cursor: pointer; white-space: nowrap;"
+    @click="prixMin = 0; prixMax = prixBorne"
+  >
+    Réinitialiser
+  </button>
+</div>
 
           <div style="display: flex; gap: 0.5rem; align-items: center">
             <label for="tri-prix" style="font-size: 0.9rem; font-weight: 600"
@@ -1300,7 +1414,7 @@ body.dark .fav.active { color: #ff6b7a; }
               >
                 Modifier
               </button>
-              <button class="del" @click="supprimer(a.id)">Supprimer</button>
+              <button class="del" @click="supprimer(a.id)">✘</button>
             </div>
           </div>
         </div>
@@ -1345,7 +1459,7 @@ body.dark .fav.active { color: #ff6b7a; }
               <button @click="ajouter(a)" :disabled="a.stock===0">
                 Ajouter
               </button>
-              <button class="del" @click="supprimer(a.id)">Supprimer</button>
+              <button class="del" @click="supprimer(a.id)">✘</button>
             </div>
           </div>
         </div>
@@ -1552,6 +1666,9 @@ body.dark .fav.active { color: #ff6b7a; }
             triggerWord: "lego",
             favoris: JSON.parse(localStorage.getItem('lego_favoris') || '[]'),
 afficherFavoris: false, // affition : systeme de favoris / wishlist pour  les produits 
+            prixMin: 0,
+            prixMax: 500,
+            prixBorne: 500, // pour le slider de price range  
             nouveauProduit: {
               nom: "",
               theme: "Animaux",
@@ -2429,20 +2546,12 @@ afficherFavoris: false, // affition : systeme de favoris / wishlist pour  les pr
             let t = this.recherche;
 
             let res = this.articles.filter((a) => {
-              if (!a.nom.toLowerCase().includes(t.toLowerCase())) {
-                return false;
-              }
-              if (
-                this.themeSelectionne !== "Tous" &&
-                a.theme !== this.themeSelectionne
-              ) {
-                return false;
-              }
-              if (this.afficherFavoris && !this.favoris.includes(a.id)) {
-                return false;
-              }
-              return true;
-            });
+  if (!a.nom.toLowerCase().includes(t.toLowerCase())) return false;
+  if (this.themeSelectionne !== "Tous" && a.theme !== this.themeSelectionne) return false;
+  if (this.afficherFavoris && !this.favoris.includes(a.id)) return false; // if you added favorites
+  if (a.prix < this.prixMin || a.prix > this.prixMax) return false;
+  return true;
+});
 
             if (this.sortPrix === "asc") {
               res = [...res].sort((a, b) => a.prix - b.prix);
@@ -2467,6 +2576,10 @@ afficherFavoris: false, // affition : systeme de favoris / wishlist pour  les pr
             }
             localStorage.setItem('lego_favoris', JSON.stringify(this.favoris));
           },
+          clampPrix() {
+            if (this.prixMin > this.prixMax) this.prixMin = this.prixMax;
+            if (this.prixMax < this.prixMin) this.prixMax = this.prixMin;
+          }, // slider des prix de facon que prix de a soit entre et prix min et prix max
           // les methodes pour ajouter des favoris / 
           jouerSonCrash() {
             try {
@@ -2611,7 +2724,7 @@ afficherFavoris: false, // affition : systeme de favoris / wishlist pour  les pr
 
           startBSOD() {
             this.bsodMode = true;
-            this.bsodProgress = 0;
+            this.bsodProgress = 0;  
 
             let progressInterval = setInterval(() => {
               if (this.bsodProgress < 100) {
