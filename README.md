@@ -4,10 +4,10 @@
 
 ---
 
-## 🗂️ Table des matières
+## Table des matières
 
 - [Catalogue LEGO — Documentation du projet](#catalogue-lego--documentation-du-projet)
-  - [🗂️ Table des matières](#️-table-des-matières)
+  - [Table des matières](#table-des-matières)
   - [Présentation du projet](#présentation-du-projet)
   - [Stack technique](#stack-technique)
   - [Bugs corrigés](#bugs-corrigés)
